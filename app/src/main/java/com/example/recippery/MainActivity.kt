@@ -12,6 +12,7 @@ import com.example.recippery.data.Recipe
 import com.example.recippery.ui.theme.RecipperyTheme
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -369,7 +371,10 @@ fun IngredientCard(
             Image(
                 painter = painterResource(id = iconResource),
                 contentDescription = null,
-                modifier = Modifier.padding(16.dp).fillMaxSize().clip(MaterialTheme.shapes.large),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.large),
                 contentScale = ContentScale.FillBounds
             )
         }
@@ -378,8 +383,14 @@ fun IngredientCard(
     }
 }
 
+
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IngredientsHeader() {
+
+    val pagerState = rememberPagerState()
+    val selectedTab = pagerState.currentPage
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -389,9 +400,19 @@ fun IngredientsHeader() {
             .fillMaxWidth()
             .height(44.dp)
     ) {
-        TabButton("Ingredients", true, Modifier.weight(1f))
-        TabButton("Tools", false, Modifier.weight(1f))
-        TabButton("Steps", false, Modifier.weight(1f))
+        TabButton(
+            "Ingredients",
+            true,
+            Modifier.weight(1f))
+
+        TabButton("Tools",
+            false,
+            Modifier.weight(1f))
+
+        TabButton("Steps",
+            false,
+            Modifier.weight(1f))
+
     }
 }
 
