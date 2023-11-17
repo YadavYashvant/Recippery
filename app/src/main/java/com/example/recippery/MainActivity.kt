@@ -23,8 +23,10 @@ import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
@@ -36,6 +38,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -46,11 +49,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
-import androidx.compose.ui.text.style.TextForegroundStyle.Unspecified.alpha
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.example.recippery.data.strawberryCake
 import com.example.recippery.ui.AppBarCollapsedHeight
 import com.example.recippery.ui.AppBarExpendedHeight
@@ -63,6 +67,9 @@ import kotlin.math.min
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window,false)
+
         setContent {
             RecipperyTheme {
                 // A surface container using the 'background' color from the theme
@@ -102,14 +109,17 @@ fun ParallaxToolbar(recipe: Recipe, scrollState: LazyListState) {
     TopAppBar(
         /*contentPadding = PaddingValues(),
         backgroundColor = White,*/
-        title = {},
+        title = {
+
+        },
         modifier = Modifier
             .height(
                 AppBarExpendedHeight
             )
+            .padding(top = 50.dp)
             .offset { IntOffset(x = 0, y = -offset) },
-        elevation = if (offset == maxOffset) 4.dp else 0.dp,
-    ) {
+        /*elevation = if (offset == maxOffset) 4.dp else 0.dp,*/
+    )
         Column {
             Box(
                 Modifier
@@ -140,8 +150,10 @@ fun ParallaxToolbar(recipe: Recipe, scrollState: LazyListState) {
                 Row(
                     modifier = Modifier
                         .fillMaxHeight()
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         recipe.category,
@@ -151,9 +163,18 @@ fun ParallaxToolbar(recipe: Recipe, scrollState: LazyListState) {
                             .background(LightGray)
                             .padding(vertical = 6.dp, horizontal = 16.dp)
                     )
+
+                    Text(
+                        recipe.title,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(horizontal = (16 + 28 * offsetProgress).dp)
+                            .scale(1f - 0.25f * offsetProgress)
+                    )
                 }
             }
-            Column(
+            /*Column(
                 Modifier
                     .fillMaxWidth()
                     .height(AppBarCollapsedHeight),
@@ -168,9 +189,8 @@ fun ParallaxToolbar(recipe: Recipe, scrollState: LazyListState) {
                         .scale(1f - 0.25f * offsetProgress)
                 )
 
-            }
+            }*/
         }
-    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -180,17 +200,19 @@ fun ParallaxToolbar(recipe: Recipe, scrollState: LazyListState) {
             .statusBarsPadding()
             .height(AppBarCollapsedHeight)
             .padding(horizontal = 16.dp)
+            /*.padding(top = 30.dp)*/
     ) {
         CircularButton(R.drawable.ic_arrow_back)
         CircularButton(R.drawable.ic_favorite)
     }
-}
+    }
+
 
 @Composable
 fun CircularButton(
     @DrawableRes iconResouce: Int,
     color: Color = Gray,
-    elevation: ButtonElevation? = ButtonDefaults.elevation(0.dp),
+    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
     onClick: () -> Unit = {}
 ) {
     Button(
@@ -224,7 +246,7 @@ fun Content(recipe: Recipe, scrollState: LazyListState) {
 }
 
 @Composable
-fun Images() {
+fun Images(){
     Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
         Image(
             painter = painterResource(id = R.drawable.strawberry_pie_2),
@@ -258,7 +280,7 @@ fun Reviews(recipe: Recipe) {
         }
         Button(
             onClick = { /*TODO*/ }, elevation = null, colors = ButtonDefaults.buttonColors(
-                containerColor = Transparent, contentColor = Pink
+                containerColor = Transparent, contentColor = Green
             )
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -274,18 +296,19 @@ fun Reviews(recipe: Recipe) {
 
 @Composable
 fun ShoppingListButton() {
-    Button(
+    OutlinedButton(
         onClick = { /*TODO*/ },
         elevation = null,
-        shape = Shapes.small,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightGray,
+            /*containerColor = Color.Green,*/
+            White,
             contentColor = Color.Black
         ), modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(text = "Add to shopping list", modifier = Modifier.padding(8.dp))
+        Text(text = "Add to shopping list", modifier = Modifier.padding(8.dp), fontSize = 16.sp)
     }
 
 }
@@ -333,18 +356,21 @@ fun IngredientCard(
         modifier = modifier.padding(bottom = 16.dp)
     ) {
         Card(
-            shape = Shapes.large,
-            elevation = 0.dp,
-            backgroundColor = LightGray,
+            shape = MaterialTheme.shapes.large,
+            /*elevation = 0.dp,*/
+            /*backgroundColor = LightGray,*/
             modifier = Modifier
                 .width(100.dp)
                 .height(100.dp)
                 .padding(bottom = 8.dp)
+                /*.background(Color.LightGray)*/,
+
         ) {
             Image(
                 painter = painterResource(id = iconResource),
                 contentDescription = null,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp).fillMaxSize().clip(MaterialTheme.shapes.large),
+                contentScale = ContentScale.FillBounds
             )
         }
         Text(text = title, modifier = Modifier.width(100.dp), fontSize = 14.sp, fontWeight = Medium)
@@ -358,7 +384,7 @@ fun IngredientsHeader() {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 16.dp)
-            .clip(Shapes.medium)
+            .clip(MaterialTheme.shapes.medium)
             .background(LightGray)
             .fillMaxWidth()
             .height(44.dp)
@@ -373,14 +399,14 @@ fun IngredientsHeader() {
 fun TabButton(text: String, active: Boolean, modifier: Modifier) {
     Button(
         onClick = { /*TODO*/ },
-        shape = Shapes.medium,
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier.fillMaxHeight(),
         elevation = null,
         colors = if (active) ButtonDefaults.buttonColors(
-            backgroundColor = Pink,
+            Color.Blue,
             contentColor = White
         ) else ButtonDefaults.buttonColors(
-            backgroundColor = LightGray,
+            LightGray,
             contentColor = DarkGray
         )
     ) {
@@ -395,15 +421,15 @@ fun ServingCalculator() {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clip(Shapes.medium)
+            .clip(MaterialTheme.shapes.medium)
             .background(LightGray)
             .padding(horizontal = 16.dp)
     ) {
 
         Text(text = "Serving", Modifier.weight(1f), fontWeight = Medium)
-        CircularButton(iconResouce = R.drawable.ic_minus, elevation = null, color = Pink) { value-- }
+        CircularButton(iconResouce = R.drawable.ic_minus, elevation = null, color = Color.Blue) { value-- }
         Text(text = "$value", Modifier.padding(16.dp), fontWeight = Medium)
-        CircularButton(iconResouce = R.drawable.ic_plus, elevation = null, color = Pink) { value++ }
+        CircularButton(iconResouce = R.drawable.ic_plus, elevation = null, color = Color.Blue) { value++ }
     }
 }
 
@@ -436,7 +462,7 @@ fun InfoColumn(@DrawableRes iconResouce: Int, text: String) {
         Icon(
             painter = painterResource(id = iconResouce),
             contentDescription = null,
-            tint = Pink,
+            tint = Color.Blue,
             modifier = Modifier.height(24.dp)
         )
         Text(text = text, fontWeight = Bold)
@@ -446,7 +472,7 @@ fun InfoColumn(@DrawableRes iconResouce: Int, text: String) {
 @Preview(showBackground = true, widthDp = 380, heightDp = 1400)
 @Composable
 fun DefaultPreview() {
-    RecipesTheme {
+    RecipperyTheme {
         MainFragment(strawberryCake)
     }
 }
