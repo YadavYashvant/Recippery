@@ -438,6 +438,7 @@ fun TabButton(text: String, active: Boolean, modifier: Modifier) {
 @Composable
 fun ServingCalculator() {
     var value by remember { mutableStateOf(6) }
+    var serving by remember { mutableStateOf(1) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
